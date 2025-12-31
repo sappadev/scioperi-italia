@@ -1,4 +1,4 @@
-# 🎯 Scioperi Italia V2.0 - Location-Aware
+# 🎯 Scioperi Italia
 
 [![GitHub Release](https://img.shields.io/github/release/sappadev/scioperi-italia.svg)](https://github.com/sappadev/scioperi-italia/releases)
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/hacs/default)
