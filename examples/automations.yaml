@@ -1,0 +1,121 @@
+# =================================================================
+# ESEMPI AUTOMAZIONI - SCIOPERI ITALIA
+# =================================================================
+
+# Notifica giornaliera scioperi oggi
+- alias: "Scioperi - Notifica Mattutina"
+  description: "Notifica alle 7:00 se ci sono scioperi oggi"
+  trigger:
+    - platform: time
+      at: "07:00:00"
+  condition:
+    - condition: numeric_state
+      entity_id: sensor.scioperi_oggi
+      above: 0
+  action:
+    - service: notify.mobile_app_TUO_DISPOSITIVO # Sostituisci con il tuo servizio di notifica
+      data:
+        title: "⚠️ Scioperi Oggi"
+        message: >
+          Attenzione! Oggi ci sono {{ states('sensor.scioperi_oggi') }} scioperi in programma.
+          Controlla il calendario per i dettagli.
+        data:
+          importance: high
+          channel: Scioperi
+          group: scioperi
+
+# Notifica sera prima di sciopero TPL
+- alias: "Scioperi - Avviso TPL Sera Prima"
+  description: "Avvisa la sera prima se domani ci sono scioperi TPL"
+  trigger:
+    - platform: time
+      at: "20:00:00"
+  condition:
+    - condition: template
+      value_template: >
+        {% set tomorrow = (now() + timedelta(days=1)).date() %}
+        {% set strikes = state_attr('sensor.scioperi_tpl', 'strikes') %}
+        {{ strikes and strikes | selectattr('start_date', 'match', tomorrow | string) | list | length > 0 }}
+  action:
+    - service: notify.telegram
+      data:
+        title: "🚌 Sciopero TPL Domani"
+        message: >
+          Domani è previsto uno sciopero del trasporto pubblico locale.
+          Pianifica percorsi alternativi!
+
+# Notifica sciopero aerei
+- alias: "Scioperi - Alert aerei"
+  description: "Notifica quando vengono annunciati scioperi aerei"
+  trigger:
+    - platform: state
+      entity_id: sensor.scioperi_aereo
+  condition:
+    - condition: template
+      value_template: "{{ trigger.to_state.state | int > trigger.from_state.state | int }}"
+  action:
+    - service: notify.mobile_app_TUO_DISPOSITIVO # Sostituisci con il tuo servizio di notifica
+      data:
+        title: "✈️ Nuovo Sciopero aereo"
+        message: >
+          Annunciato nuovo sciopero nel settore aereo.
+          {{ states('sensor.scioperi_aereo') }} scioperi in totale.
+          Data: {{ state_attr('sensor.scioperi_prossimo', 'start_date') }}
+
+# Notifica sciopero treni
+- alias: "Scioperi - Alert treni"
+  description: "Notifica quando vengono annunciati scioperi ferroviari"
+  trigger:
+    - platform: state
+      entity_id: sensor.scioperi_ferroviario
+  condition:
+    - condition: template
+      value_template: "{{ trigger.to_state.state | int > trigger.from_state.state | int }}"
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "🚂 Nuovo sciopero ferroviario"
+        message: >
+          Attenzione! Annunciato sciopero ferroviario.
+          Dettagli: {{ state_attr('sensor.scioperi_prossimo', 'modality') }}
+
+# Notifica settimanale riepilogo
+- alias: "Scioperi - Riepilogo settimanale"
+  description: "Riepilogo settimanale notificato la domenica sera alle ore 18:00 degli scioperi della settimana prevista"
+  trigger:
+    - platform: time
+      at: "18:00:00"
+  condition:
+    - condition: time
+      weekday:
+        - sun
+  action:
+    - service: notify.telegram
+      data:
+        title: "📅 Riepilogo scioperi settimana"
+        message: >
+          Ecco gli scioperi previsti questa settimana:
+          
+          TPL: {{ states('sensor.scioperi_tpl') }}
+          Aerei: {{ states('sensor.scioperi_aereo') }}
+          Treni: {{ states('sensor.scioperi_ferroviario') }}
+          
+          Totale: {{ states('sensor.scioperi_totali') }}
+
+# TTS notifica sciopero mattina
+- alias: "Scioperi - Annuncio vocale alle ore 08:00"
+  description: "Annuncio vocale se ci sono scioperi oggi"
+  trigger:
+    - platform: time
+      at: "08:00:00"
+  condition:
+    - condition: numeric_state
+      entity_id: sensor.scioperi_oggi
+      above: 0
+  action:
+    - service: tts.google_translate_say
+      entity_id: media_player.soggiorno
+      data:
+        message: >
+          Attenzione. Oggi sono previsti {{ states('sensor.scioperi_oggi') }} scioperi.
+          Settore {{ state_attr('sensor.scioperi_prossimo', 'sector') }}.

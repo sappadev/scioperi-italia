@@ -1,0 +1,12 @@
+{
+  "domain": "scioperi_italia",
+  "name": "Scioperi Italia",
+  "codeowners": ["@fra"],
+  "config_flow": true,
+  "documentation": "https://github.com/fra/scioperi-italia",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/fra/scioperi-italia/issues",
+  "requirements": ["feedparser==6.0.10"],
+  "version": "1.0.0"
+}

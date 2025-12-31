@@ -1,0 +1,35 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Italian Strikes",
+        "description": "Configure the integration to monitor strikes in Italy",
+        "data": {
+          "rss_url": "RSS Feed URL (leave default)",
+          "region_filter": "Filter by Region",
+          "sector_filter": "Filter by Sector"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Unable to connect to RSS feed",
+      "invalid_feed": "Invalid RSS feed",
+      "unknown": "Unknown error"
+    },
+    "abort": {
+      "already_configured": "Integration already configured"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Italian Strikes Options",
+        "description": "Modify strike filters",
+        "data": {
+          "region_filter": "Filter by Region",
+          "sector_filter": "Filter by Sector"
+        }
+      }
+    }
+  }
+}

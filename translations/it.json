@@ -1,0 +1,35 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Scioperi Italia",
+        "description": "Configura l'integrazione per monitorare gli scioperi in Italia",
+        "data": {
+          "rss_url": "URL Feed RSS (lascia default)",
+          "region_filter": "Filtra per Regione",
+          "sector_filter": "Filtra per Settore"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Impossibile connettersi al feed RSS",
+      "invalid_feed": "Feed RSS non valido",
+      "unknown": "Errore sconosciuto"
+    },
+    "abort": {
+      "already_configured": "Integrazione già configurata"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opzioni Scioperi Italia",
+        "description": "Modifica i filtri per gli scioperi",
+        "data": {
+          "region_filter": "Filtra per Regione",
+          "sector_filter": "Filtra per Settore"
+        }
+      }
+    }
+  }
+}

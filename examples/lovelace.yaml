@@ -1,0 +1,229 @@
+# =================================================================
+# ESEMPI LOVELACE DASHBOARD - SCIOPERI ITALIA
+# =================================================================
+
+# DASHBOARD COMPLETA
+views:
+  - title: Scioperi Italia
+    path: scioperi
+    icon: mdi:alert-circle
+    badges: []
+    cards:
+      # === CARD RIEPILOGO ===
+      - type: entities
+        title: 📊 Riepilogo scioperi
+        show_header_toggle: false
+        entities:
+          - entity: sensor.scioperi_totali
+            name: Totali Futuri
+            icon: mdi:alert-circle-outline
+          - entity: sensor.scioperi_oggi
+            name: Oggi
+            icon: mdi:calendar-today
+          - entity: sensor.scioperi_prossimo
+            name: Prossimo
+            icon: mdi:calendar-clock
+            secondary_info: last-changed
+      # === CARD STATISTICHE PER SETTORE ===
+      - type: horizontal-stack
+        cards:
+          - type: statistic
+            entity: sensor.scioperi_tpl
+            name: TPL
+            icon: mdi:bus
+            period:
+              calendar:
+                period: month
+          - type: statistic
+            entity: sensor.scioperi_aereo
+            name: Aerei
+            icon: mdi:airplane
+          - type: statistic
+            entity: sensor.scioperi_ferroviario
+            name: Treni
+            icon: mdi:train
+          - type: statistic
+            entity: sensor.scioperi_trasporto_merci_e_logistica
+            name: Logistica
+            icon: mdi:truck
+      # === CARD DETTAGLI PROSSIMO SCIOPERO ===
+      - type: markdown
+        title: 📅 Dettagli prossimo sciopero
+        content: |
+          {% if state_attr('sensor.scioperi_prossimo', 'sector') %}
+          ### {{ state_attr('sensor.scioperi_prossimo', 'sector') }}
+          
+          **📅 Data:** {{ state_attr('sensor.scioperi_prossimo', 'start_date') }}
+          
+          **📍 Luogo:** {{ state_attr('sensor.scioperi_prossimo', 'region') }}
+          {% if state_attr('sensor.scioperi_prossimo', 'province') != 'Tutte' %}
+          ({{ state_attr('sensor.scioperi_prossimo', 'province') }})
+          {% endif %}
+          
+          **⏰ Modalità:** {{ state_attr('sensor.scioperi_prossimo', 'modality') }}
+          
+          **🎯 Rilevanza:** {{ state_attr('sensor.scioperi_prossimo', 'relevance') }}
+          
+          **👥 Sindacati:** {{ state_attr('sensor.scioperi_prossimo', 'unions') }}
+          
+          **📋 Categoria:** {{ state_attr('sensor.scioperi_prossimo', 'category') }}
+          {% else %}
+          ### ✅ Nessuno sciopero programmato
+          {% endif %}
+      # === CALENDARIO ===
+      - type: calendar
+        title: 📆 Calendario scioperi
+        entities:
+          - calendar.scioperi_italia
+        initial_view: listWeek
+      # === CONDITIONAL CARD - SCIOPERI OGGI ===
+      - type: conditional
+        conditions:
+          - condition: numeric_state
+            entity: sensor.scioperi_oggi
+            above: 0
+        card:
+          type: markdown
+          title: ⚠️ SCIOPERI OGGI
+          card_mod:
+            style: |
+              ha-card {
+                background-color: rgba(255, 0, 0, 0.1);
+                border: 2px solid red;
+              }
+          content: |
+            ## ⚠️ ATTENZIONE
+            
+            Oggi ci sono **{{ states('sensor.scioperi_oggi') }}** scioperi in corso!
+            
+            {% for strike in state_attr('sensor.scioperi_oggi', 'strikes') %}
+            ---
+            **{{ strike.sector }}**
+            - Regione: {{ strike.region }}
+            - Orario: {{ strike.modality }}
+            {% endfor %}
+      # === CARD SCIOPERI PER SETTORE (DETTAGLIO) ===
+      - type: entities
+        title: 🚌 Dettaglio TPL
+        show_header_toggle: false
+        entities:
+          - type: custom:fold-entity-row
+            head:
+              entity: sensor.scioperi_tpl
+              name: Trasporto Pubblico Locale
+            padding: 0
+            entities:
+              - type: markdown
+                content: |
+                  {% for strike in state_attr('sensor.scioperi_tpl', 'strikes') %}
+                  - **{{ strike.start_date }}** - {{ strike.region }}
+                  {% endfor %}
+      - type: entities
+        title: ✈️ Dettaglio aerei
+        show_header_toggle: false
+        entities:
+          - type: custom:fold-entity-row
+            head:
+              entity: sensor.scioperi_aereo
+              name: Settore aereo
+            padding: 0
+            entities:
+              - type: markdown
+                content: |
+                  {% for strike in state_attr('sensor.scioperi_aereo', 'strikes') %}
+                  - **{{ strike.start_date }}** - {{ strike.region }} - {{ strike.modality }}
+                  {% endfor %}
+# =================================================================
+# CARD COMPATTA PER LA DASHBOARD PRINCIpALE
+# =================================================================
+
+# Card minimalista per dashboard principale
+- type: custom:mushroom-template-card
+  primary: "{{ states('sensor.scioperi_totali') }} Scioperi"
+  secondary: >
+    {% if states('sensor.scioperi_oggi') | int > 0 %}
+      ⚠️ {{ states('sensor.scioperi_oggi') }} oggi
+    {% else %}
+      Prossimo: {{ states('sensor.scioperi_prossimo') }}
+    {% endif %}
+  icon: mdi:alert-circle
+  icon_color: >
+    {% if states('sensor.scioperi_oggi') | int > 0 %}
+      red
+    {% elif states('sensor.scioperi_totali') | int > 5 %}
+      orange
+    {% else %}
+      green
+    {% endif %}
+  tap_action:
+    action: navigate
+    navigation_path: /lovelace/scioperi
+
+# =================================================================
+# BADGE PER TOP BAR
+# =================================================================
+
+- type: entity
+  entity: sensor.scioperi_oggi
+  name: Scioperi Oggi
+  icon: mdi:alert
+
+# =================================================================
+# PICTURE ELEMENTS CARD (AVANZATA)
+# =================================================================
+
+- type: picture-elements
+  image: /local/PLACEHOLDER.jpg # Definisci un'immagine di sfondo appropriata
+  elements:
+    - type: state-label
+      entity: sensor.scioperi_totali
+      prefix: "Scioperi: "
+      style:
+        top: 10%
+        left: 10%
+        font-size: 20px
+        color: white
+        background-color: rgba(0, 0, 0, 0.5)
+        padding: 10px
+        border-radius: 5px
+    - type: state-label
+      entity: sensor.scioperi_oggi
+      prefix: "Oggi: "
+      style:
+        top: 25%
+        left: 10%
+        font-size: 16px
+        color: red
+        background-color: rgba(255, 255, 255, 0.9)
+        padding: 8px
+        border-radius: 5px
+
+# =================================================================
+# BUTTON CARD (CUSTOM)
+# =================================================================
+
+- type: custom:button-card
+  entity: sensor.scioperi_totali
+  name: Scioperi Italia
+  icon: mdi:alert-circle
+  show_state: true
+  state:
+    - value: 0
+      color: green
+      icon: mdi:check-circle
+    - value: 1
+      color: orange
+      operator: '>='
+    - value: 10
+      color: red
+      operator: '>='
+  tap_action:
+    action: more-info
+  styles:
+    card:
+      - font-size: 16px
+      - height: 100px
+    name:
+      - font-weight: bold
+    state:
+      - font-size: 20px
