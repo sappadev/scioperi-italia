@@ -310,7 +310,6 @@ Risultato controllo percorso (da `check_route` service).
 
 ## 📚 Documentazione Completa
 
-- [📥 Guida Installazione](INSTALL.md)
 - [🤖 Esempi Automazioni](custom_components/scioperi_italia/examples/automations.yaml)
 - [🎨 Esempi Dashboard](custom_components/scioperi_italia/examples/lovelace.yaml)
 - [🤝 Contribuire](CONTRIBUTING.md)
