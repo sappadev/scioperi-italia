@@ -2,17 +2,17 @@
 
 Monitora gli scioperi in Italia direttamente in Home Assistant!
 
-## ✨ Caratteristiche Principali
+## ✨ Caratteristiche principali
 
-🚌 **Tutti i Settori**: TPL, Aerei, Treni, Logistica, Marittimo
+🚌 **Tutti i settori**: TPL, Aerei, Treni, Logistica, Marittimo
 📅 **Calendario Integrato**: Vedi tutti gli scioperi nel calendario
-🔔 **Notifiche Automatiche**: Avvisi prima degli scioperi
-📊 **Sensori Multipli**: Un sensore per ogni settore
-🎯 **Filtri Personalizzati**: Filtra per regione e settore
+🔔 **Notifiche automatiche**: Avvisi prima degli scioperi
+📊 **Sensori multipli**: Un sensore per ogni settore
+🎯 **Filtri personalizzati**: Filtra per regione e settore
 ⚙️ **Configurazione UI**: Setup semplicissimo
-🔄 **Aggiornamento Automatico**: Ogni 6 ore dal feed ufficiale MIT
+🔄 **Aggiornamento automatico**: Ogni 6 ore dal feed ufficiale MIT
 
-## 🚀 Quick Start
+## 🚀 Quick start
 
 1. Installa tramite HACS
 2. Riavvia Home Assistant
@@ -20,7 +20,7 @@ Monitora gli scioperi in Italia direttamente in Home Assistant!
 4. Configura i filtri (opzionale)
 5. Goditi i tuoi sensori e calendario!
 
-## 📊 Sensori Creati
+## 📊 Sensori creati
 
 - Scioperi Totali
 - Scioperi Oggi
@@ -44,7 +44,7 @@ Crea facilmente automazioni per:
 - Alert per la tua regione
 - Promemoria prima dell'orario di inizio
 
-## 📝 Dati Ufficiali
+## 📝 Dati ufficiali
 
 Tutti i dati provengono dal feed RSS ufficiale del Ministero delle Infrastrutture e dei Trasporti.
 
