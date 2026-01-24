@@ -1,0 +1,10 @@
+{
+  "name": "Scioperi Italia",
+  "content_in_root": false,
+  "filename": "scioperi_italia",
+  "country": ["IT"],
+  "homeassistant": "2023.1.0",
+  "render_readme": true,
+  "zip_release": false,
+  "hide_default_branch": false
+}
